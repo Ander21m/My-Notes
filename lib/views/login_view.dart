@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 import 'package:mynotes/constants/routes.dart';
-import 'package:mynotes/views/verify_email_view.dart';
+
 
 import '../utilities/show_error_dialog.dart';
 
