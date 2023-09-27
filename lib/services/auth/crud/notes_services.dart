@@ -140,6 +140,7 @@ class NotesService{
       throw CouldNotFindUser();
     }
     else{
+      
       return DatabaseUser.fromRow(results.first);
     }
   }
@@ -167,6 +168,7 @@ class NotesService{
 
     _notes.add(note);
     _notesStreamController.add(_notes);
+    
     return note;
   }
 
@@ -321,7 +323,9 @@ const createUserTable ='''CREATE TABLE IF NOT EXISTS "user" (
 
 
 const createNotesTable ='''CREATE TABLE IF NOT EXISTS "note" (
-	        "id"	INTEGER NOT NULL,
-	        "email"	TEXT NOT NULL UNIQUE,
-	        PRIMARY KEY("id" AUTOINCREMENT)
-          );''';
+	      $idColumn	INTEGER NOT NULL,
+	      $userIdColumn	INTEGER NOT NULL,
+	      $textColumn	TEXT,
+	      $isSyncedWithCloudColumn	INTEGER NOT NULL DEFAULT 0,
+	      FOREIGN KEY($userIdColumn) REFERENCES $userTable($idColumn),
+	      PRIMARY KEY("id" AUTOINCREMENT));''';
