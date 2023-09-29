@@ -17,10 +17,17 @@ class NotesService{
 
 
   List<DatabaseNote> _notes = [];
-  final _notesStreamController = StreamController<List<DatabaseNote>>.broadcast();
+  late final  StreamController<List<DatabaseNote>>_notesStreamController;
 
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance(){
+    _notesStreamController = StreamController<List<DatabaseNote>>.broadcast(
+      onListen: (){
+        _notesStreamController.sink.add(_notes);
+      }
+    );
+    
+  }
   factory NotesService() => _shared;
 
   Stream<List<DatabaseNote>> get allNotes => _notesStreamController.stream;
@@ -74,6 +81,7 @@ class NotesService{
       //empty
     }
   }
+
   Future<void> open() async{
 
 
@@ -159,8 +167,8 @@ class NotesService{
     const text = '';
     //create the note
     final noteId = await db.insert(noteTable,{
-      userIdColumn: owner.id,
-      textColumn: text,
+      userIdColumn:owner.id,
+      textColumn:text,
       isSyncedWithCloudColumn: 1
     });
 
@@ -283,10 +291,12 @@ class DatabaseNote{
   final String text;
   final bool isSyncedWithCloud;
 
-  DatabaseNote({required this.id,required this.userId,required this.text,required this.isSyncedWithCloud});
+  const DatabaseNote({required this.id,required this.userId,required this.text,required this.isSyncedWithCloud});
 
-  DatabaseNote.fromRow(Map<String,Object?> map) : id = map[idColumn] as int,userId = map[userIdColumn] as int
-  ,text = map[textColumn] as String, isSyncedWithCloud = (map[isSyncedWithCloudColumn] as int)  == 1 ? true: false;
+  DatabaseNote.fromRow(Map<String,Object?> map) : id = map[idColumn] as int,
+  userId = map[userIdColumn] as int,
+  text = map[textColumn] as String, 
+  isSyncedWithCloud = (map[isSyncedWithCloudColumn] as int)  == 1 ? true: false;
   
   @override
   String toString() {
@@ -314,18 +324,16 @@ const userIdColumn = "user_id";
 const textColumn = "text";
 const isSyncedWithCloudColumn = "is_synced_with_cloud";
 
-const createUserTable ='''CREATE TABLE IF NOT EXISTS "user" (
-	      "id"	INTEGER NOT NULL,
-	      "email"	TEXT NOT NULL UNIQUE,
-	      PRIMARY KEY("id" AUTOINCREMENT)
-        );
-        ''';
-
-
-const createNotesTable ='''CREATE TABLE IF NOT EXISTS "note" (
-	      $idColumn	INTEGER NOT NULL,
-	      $userIdColumn	INTEGER NOT NULL,
-	      $textColumn	TEXT,
-	      $isSyncedWithCloudColumn	INTEGER NOT NULL DEFAULT 0,
-	      FOREIGN KEY($userIdColumn) REFERENCES $userTable($idColumn),
-	      PRIMARY KEY("id" AUTOINCREMENT));''';
+const createUserTable = '''CREATE TABLE IF NOT EXISTS "user" (
+	"id"	INTEGER NOT NULL,
+	"email"	TEXT NOT NULL UNIQUE,
+	PRIMARY KEY("id" AUTOINCREMENT)
+);''';
+const createNotesTable ='''CREATE TABLE  IF NOT EXISTS "note" (
+	"id"	INTEGER NOT NULL,
+	"user_id"	INTEGER NOT NULL,
+	"text"	TEXT,
+	"is_synced_with_cloud"	INTEGER NOT NULL DEFAULT 0,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("user_id") REFERENCES "user"("id")
+);''';
