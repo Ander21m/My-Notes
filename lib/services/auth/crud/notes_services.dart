@@ -176,6 +176,8 @@ class NotesService{
 
     _notes.add(note);
     _notesStreamController.add(_notes);
+
+    await _cacheNotes();
     
     return note;
   }
@@ -229,6 +231,7 @@ class NotesService{
     final db = _getDatabaseOrThrow();
     final notes = await db.query(noteTable);
 
+    await _cacheNotes();
     return notes.map((noteRow) => DatabaseNote.fromRow(noteRow));
 
     

@@ -83,10 +83,11 @@ class _NewNoteViewState extends State<NewNoteView> {
     return Scaffold(
 
       appBar: AppBar(title: const Text("New Note")),
-     
-     body: FutureBuilder(future: createNewNote(),builder:(context, snapshot) {
+      body: FutureBuilder(future: createNewNote(),builder:(context, snapshot) {
        switch(snapshot.connectionState){
+        
         case ConnectionState.done:
+        print("hello");
         _note = snapshot.data as DatabaseNote?;
         _setupTextControllerListener();
         return TextField(controller: _textController,
@@ -97,6 +98,7 @@ class _NewNoteViewState extends State<NewNoteView> {
         ),
         );
         default:
+        
         return const CircularProgressIndicator();
        }
       
