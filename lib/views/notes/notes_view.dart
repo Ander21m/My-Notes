@@ -38,7 +38,7 @@ class _NotesViewState extends State<NotesView> {
       appBar: AppBar(title: const Text("Your Notes"),
       actions: [
         IconButton(onPressed: (){
-          Navigator.of(context).pushNamed(newNoteRoute);
+          Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
         }
          ,icon: const Icon(Icons.add)),
         PopupMenuButton<MenuAction>(onSelected: (value) async{
@@ -70,16 +70,23 @@ class _NotesViewState extends State<NotesView> {
                
               switch(snapshot.connectionState){
                 
-                case ConnectionState.waiting:
+                
                 case ConnectionState.active:
                
                 if(snapshot.hasData && (snapshot.data as List<DatabaseNote>).isNotEmpty){
                   
                   final allNotes = snapshot.data as List<DatabaseNote>;
-
-                  return NoteListView(notes: allNotes, onDeleteNote: (notes)async{
+                  
+                  
+                  return NoteListView(
+                    notes: allNotes, 
+                    onDeleteNote: (notes)async{
                     await _notesService.deleteNote(id: notes.id);
-                  });
+                  },
+                  onTap:(note){
+                    Navigator.of(context).pushNamed(createOrUpdateNoteRoute,arguments: note);
+                  },
+                  );
                   
                   
                  

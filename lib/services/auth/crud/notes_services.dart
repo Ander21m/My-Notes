@@ -177,7 +177,7 @@ class NotesService{
     _notes.add(note);
     _notesStreamController.add(_notes);
 
-    await _cacheNotes();
+    
     
     return note;
   }
