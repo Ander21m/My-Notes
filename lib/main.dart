@@ -13,6 +13,7 @@ import 'package:mynotes/views/login_view.dart';
 import 'package:mynotes/views/notes/create_update_note_view.dart';
 import 'package:mynotes/views/notes/notes_view.dart';
 import 'package:mynotes/views/register_view.dart';
+
 import 'package:mynotes/views/verify_email_view.dart';
 
 
@@ -31,10 +32,7 @@ void main() async{
       home:  BlocProvider<AuthBloc>(create: (context)=>AuthBloc(FirebaseAuthProvider()),
       child: const HomePage(),),
       routes: {
-        loginRoute :(context) => const LoginView(),
-        registerRoute:(context) => const RegisterView(),
-        notesRoute:(context) => const NotesView(),
-        verifyEmailRoute:(context) => const VerifiedEmailView(),
+       
         createOrUpdateNoteRoute:(context) => const CreateUpdateNoteView(),
       },
 
@@ -62,6 +60,9 @@ class HomePage extends StatelessWidget {
       }
       else if (state is AuthStateLoggedOut){
         return const LoginView();
+      }
+      else if(state is AuthStateRegistering){
+        return const RegisterView();
       }
       else{
         return const Scaffold(body: CircularProgressIndicator(),);
